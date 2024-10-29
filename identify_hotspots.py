@@ -1,7 +1,7 @@
 import arcpy
 from arcpy.ia import *
 
-# just a test
+
 def identify_hotspots(selected_watershed, x, UserPath, MainPathGDB):
     arcpy.env.overwriteOutput = True
     print("Identifying Hotspots")
@@ -50,9 +50,9 @@ def identify_hotspots(selected_watershed, x, UserPath, MainPathGDB):
                                         expression="!MEAN_MEAN! + (1.5*!MEAN_STD!)")[0]
 
     # Process: Create Constant Raster (Create Constant Raster) (sa)
-    constant_raster_location = MainPathGDB + "/createConstantRaster"
-    print("Creating constant raster....")
-    constant_raster = constant_raster_location
+    #constant_raster_location = MainPathGDB + "/createConstantRaster"
+   # print("Creating constant raster....")
+    #constant_raster = constant_raster_location
     cursor = arcpy.SearchCursor(cal_field_zonal_statistics)
     field = "min_value"
     # check if one or more than one building footprint exist
@@ -61,12 +61,12 @@ def identify_hotspots(selected_watershed, x, UserPath, MainPathGDB):
         print(min_value)
     constant_raster_location = arcpy.sa.CreateConstantRaster(min_value, "FLOAT", "1", extract_ws)
     # constant raster not getting saved in the gdb
-    constant_raster_location.save(constant_raster)
+   # constant_raster_location.save(constant_raster)
 
     # Process: filter Raster and set hotspots to value 1 (Raster Calculator) (ia)
     con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
     filter_values_in_raster = con_raster_cal
-    con_raster_cal = Con(extract_ws > constant_raster, 1, 0)
+    con_raster_cal = Con(extract_ws > min_value, 1, 0)
     con_raster_cal.save(filter_values_in_raster)
     # Process: Raster to Polygon (Raster to Polygon) (conversion)
     raster_polygon = MainPathGDB + "/raster_to_pol_hotspots_ws_" + str(x)
@@ -238,7 +238,7 @@ if __name__ == '__main__':
     # Please change the path here This Part below (two lines) has to be added to all separated models if you want to
     # run them, it is also part of the combined one.
     UserPath = "E:/ErospotWorkspace"
-    MainPathGDB = "E:/ErospotWorkspace/EROSPOT.gdb"
+    MainPathGDB = "E:/ErospotWorkspace/EROSPOT_v2.gdb"
     ezg_by_erospot = MainPathGDB + "/ezg_by_erospot"
     feature_layer = arcpy.MakeFeatureLayer_management(ezg_by_erospot, 'feature')
     for x in range(4, 5):

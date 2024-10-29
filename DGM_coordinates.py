@@ -12,18 +12,19 @@ def find_coordinates(selected_watershed, x, UserPath, MainPathGDB, ezg_by_erospo
                               field_is_nullable="NULLABLE", field_is_required="NON_REQUIRED", field_domain="")[0]
     cal_coord_XH = \
         arcpy.CalculateField_management(in_table=selected_watershed, field="x_low", expression="!dummy_coordinate!",
+                                        expression_type="PYTHON3", code_block="", field_type="LONG",
                                         enforce_domains="NO_ENFORCE_DOMAINS")[0]
     cal_coord_XH = \
         arcpy.CalculateField_management(in_table=selected_watershed, field="x_high", expression="!dummy_coordinate!",
-                                        expression_type="PYTHON3", code_block="", field_type="TEXT",
+                                        expression_type="PYTHON3", code_block="", field_type="LONG",
                                         enforce_domains="NO_ENFORCE_DOMAINS")[0]
     cal_coord_YL = \
         arcpy.CalculateField_management(in_table=selected_watershed, field="y_low", expression="!dummy_coordinate!",
-                                        expression_type="PYTHON3", code_block="", field_type="TEXT",
+                                        expression_type="PYTHON3", code_block="", field_type="LONG",
                                         enforce_domains="NO_ENFORCE_DOMAINS")[0]
     cal_coord_YH = \
         arcpy.CalculateField_management(in_table=selected_watershed, field="y_high", expression="!dummy_coordinate!",
-                                        expression_type="PYTHON3", code_block="", field_type="TEXT",
+                                        expression_type="PYTHON3", code_block="", field_type="LONG",
                                         enforce_domains="NO_ENFORCE_DOMAINS")[0]
     # Minimum Bounding Geometry
     arcpy.MinimumBoundingGeometry_management(in_features=selected_watershed, out_feature_class=erospot_minimum,

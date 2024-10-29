@@ -70,9 +70,9 @@ def identify_hotspots(x , UserPath, MainPathGDB):
                                         expression="!MEAN_MEAN! + (1.5*!MEAN_STD!)")[0]
 
     # Process: Create Constant Raster (Create Constant Raster) (sa)
-    constant_raster_location = MainPathGDB + "/createConstantRaster"
-    print("Creating constant raster....")
-    constant_raster = constant_raster_location
+    #constant_raster_location = MainPathGDB + "/createConstantRaster"
+    #print("Creating constant raster....")
+   # constant_raster = constant_raster_location
     cursor = arcpy.SearchCursor(cal_field_zonal_statistics)
     field = "min_value"
     # check if one or more than one building footprint exist
@@ -81,12 +81,12 @@ def identify_hotspots(x , UserPath, MainPathGDB):
         print(min_value)
     constant_raster_location = arcpy.sa.CreateConstantRaster(min_value, "FLOAT", "1", extract_ws)
     # constant raster not getting saved in the gdb
-    constant_raster_location.save(constant_raster)
+    #constant_raster_location.save(constant_raster)
 
     # Process: filter Raster and set hotspots to value 1 (Raster Calculator) (ia)
-    con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
-    filter_values_in_raster = con_raster_cal
-    con_raster_cal = Con(extract_ws > constant_raster, 1, 0)
+    #con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
+    #filter_values_in_raster = con_raster_cal
+    con_raster_cal = Con(extract_ws > min_value, 1, 0)
     con_raster_cal.save(filter_values_in_raster)
     # Process: Raster to Polygon (Raster to Polygon) (conversion)
     raster_polygon = MainPathGDB + "/raster_to_pol_hotspots_ws_" + str(x)
@@ -195,6 +195,12 @@ def identify_hotspots(x , UserPath, MainPathGDB):
         , 2)""")[0]
     print("Converting features to json...")
     # Process: Features To JSON (2) (Features To JSON) (conversion)
+    if os.path.exists(UserPath + "/Hotspots"):
+        print("folder '{}' already exists!")
+    else:
+        os.makedirs(UserPath+"/Hotspots")
+        print("Hotspots folder created for storing .geojson files!")
+
     json_path = UserPath + "/Hotspots/ws_" + str(x) + ".geojson"
     arcpy.conversion.FeaturesToJSON(in_features=hotspots_cal_erosion_hotspot,
                                     out_json_file=json_path, geoJSON="GEOJSON",
@@ -480,11 +486,14 @@ def model_combined(CentralFolderPath, GDBPath, lower, upper, numbers):
                 streams_atkis(selected_watershed, x, CentralFolderPath, GDBPath)
                 print("Calculating k_factor")
                 calculate_K_Factor(GDBPath, CentralFolderPath, selected_watershed, x)
-                # arcpy.Buffer_analysis(in_features=selected_watershed,out_feature_class=selected_watershed,buff)
+                #100 m
+                selected_watershed_buffer_r = GDBPath+"/selected_watershed_r"
+                arcpy.Buffer_analysis(in_features=selected_watershed,out_feature_class=selected_watershed_buffer_r,
+                                      buffer_distance_or_field=" 100 Meters ")
                 print("Calculating r_factor")
                 arcpy.Clip_management(in_raster=r_factor_komplett_bayern_tif, rectangle="",
                                       out_raster=watershed_names_r,
-                                      in_template_dataset=selected_watershed, nodata_value="1,79e+308",
+                                      in_template_dataset=selected_watershed_buffer_r, nodata_value="1,79e+308",
                                       clipping_geometry="NONE",
                                       maintain_clipping_extent="NO_MAINTAIN_EXTENT")
 
