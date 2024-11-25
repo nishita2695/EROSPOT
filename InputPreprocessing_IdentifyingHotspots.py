@@ -1,3 +1,15 @@
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-20
+
+Description: This script executes two processing steps: The first and most important - Integrates all the sub-models
+as a function call and in the correct order of execution. The second: Integrates the identification of
+hotspots after the first two steps of the model are executed. Some functions for the preprocessing
+steps are coded in this file: Can be modularized in the future.
+
+"""
 import os
 
 import arcpy
