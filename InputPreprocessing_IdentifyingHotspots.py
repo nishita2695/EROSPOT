@@ -94,7 +94,7 @@ def identify_hotspots(x, UserPath, MainPathGDB):
     for row in cursor:
         min_value = (row.getValue(field))
         print(min_value)
-    constant_raster_location = arcpy.sa.CreateConstantRaster(min_value, "FLOAT", "1", extract_ws)
+    # constant_raster_location = arcpy.sa.CreateConstantRaster(min_value, "FLOAT", "1", extract_ws)
     # constant raster not getting saved in the gdb
     #constant_raster_location.save(constant_raster)
 
