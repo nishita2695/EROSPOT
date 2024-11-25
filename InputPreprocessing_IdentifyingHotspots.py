@@ -461,7 +461,7 @@ def model_combined_once(CentralFolderPath, GDBPath, x):
     # NOTE FOR INVEST * INPUT
     # we nullify the iteration and link it with the x being sent. So instead of the iteration being created
     # in here, it will be triggered by the extra script
-    print("WATERSHED NUMER " + str(x))
+    print("WATERSHED NUMBER " + str(x))
     print(":::::::::::::::::::::")
     if os.path.exists(CentralFolderPath + "/InputDataInvest/testing/ws_" + str(x)):
         print("Folder for specific Watershed exists for Input Intermediate Data Storage!")
