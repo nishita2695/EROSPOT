@@ -1,4 +1,14 @@
-# author:nishita
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to combine the invekos data to the atkis data to calculate the summable c-values
+as per Auerswald et al (2019) guidelines, and also to generate the biophysical table which is used as an input for
+InVeST and also adjust the attributes as per the general description provided in the guidebook .
+
+"""
 import arcpy
 
 arcpy.env.overwriteOutput = True
@@ -98,7 +108,7 @@ def invekos_atkis_combined(selected_watershed, x, UserPath, MainPathGDB):
                                                                   code_block="", field_type="TEXT",
                                                                   enforce_domains="NO_ENFORCE_DOMAINS")[0]
     # Loop years
-    print("Before Loop")
+    print("Combining InVeKoS and ATKIS data...")
     for index in range(0, 7):
         # Add field combi_code_year
         union_inv_atk_CalLucode[index] = \

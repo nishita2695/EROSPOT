@@ -1,4 +1,13 @@
-# author:nishita
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to combine the invekos data to get the field boundaries,
+and also adjust the attributes as per the general description provided in the guidebook for the years from 2015-2021
+
+"""
 import arcpy
 
 # Allowing overwriting outputs on reruns

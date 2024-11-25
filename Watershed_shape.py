@@ -1,3 +1,12 @@
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to get the shapefile for each watershed boundary
+
+"""
 import arcpy
 
 

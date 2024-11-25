@@ -1,11 +1,19 @@
-# author:nishita
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to extract streams or water bodies from the ATKIS dataset
+
+"""
 import arcpy
 
 arcpy.env.overwriteOutput = True
 
 
 def streams_atkis(selected_watershed, x, UserPath, MainPathGDB):
-    print("Model Streams_ATKIS")
+    print("Calculating the Water bodies from ATKIS data...")
     gew01_shp = UserPath + "/ATKIS/gew01_f.shp"
     gew01_shp_l = UserPath + "/ATKIS/gew01_l.shp"
     gew01_l_Clip = MainPathGDB + "/gew01_Clip"

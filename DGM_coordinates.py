@@ -1,3 +1,13 @@
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to get the corner coordinates of the minimum bounding rectangle
+of the watershed and store them as files in a coherent naming structure
+
+"""
 import arcpy
 
 

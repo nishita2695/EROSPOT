@@ -1,9 +1,14 @@
-'''
-@ nishita
-k- factor calculation including sealed areas for each watershed
+
+"""
+Author: Nishita Thakur
+Concept: Marvin Melzer
+Project: EROSPOT (DAKIS)
+Last Update: 2024-11-25
+
+Description: This script is used to calculate the k-factor for watersheds, including sealed areas as well.
 To be called in a loop from the integrated model. Standalone version works as well. Loop parameters need to be changed,
 adjustable statically by user.
-'''
+"""
 import arcpy
 import os
 
@@ -44,7 +49,7 @@ def calculate_K_Factor(GeoDatabasePath, DirectoryPath, selected_watershed, x):
     # Loop for each watershed
 
     if os.path.exists(DirectoryPath + "/InputDataInvest/testing/ws_" + str(x) + "/k-factor"):
-        print("ws_ exists")
+        print("Folder for storage of k-factor raster exists!")
     else:
         os.makedirs(DirectoryPath + "/InputDataInvest/testing/ws_" + str(x) + "/k-factor")
     clipped_k_factor = GeoDatabasePath + "/k_factor_clipped_str_" + str(x)
