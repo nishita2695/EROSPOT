@@ -15,7 +15,7 @@ import os
 import logging
 import sys
 #from ModelsIntegrated import model_combined, identify_hotspots
-from InputPreprocessing import model_combined_once, identify_hotspots
+from InputPreprocessing_IdentifyingHotspots import model_combined_once, identify_hotspots
 import natcap.invest.sdr.sdr
 import natcap.invest.utils
 
