@@ -102,7 +102,7 @@ def identify_hotspots(x, UserPath, MainPathGDB):
     #con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
     #filter_values_in_raster = con_raster_cal
     con_raster_cal = Con(extract_ws > min_value, 1, 0)
-    con_raster_cal.save(filter_values_in_raster)
+    #con_raster_cal.save(filter_values_in_raster)
     # Process: Raster to Polygon (Raster to Polygon) (conversion)
     raster_polygon = MainPathGDB + "/raster_to_pol_hotspots_ws_" + str(x)
     arcpy.conversion.RasterToPolygon(in_raster=con_raster_cal, out_polygon_features=raster_polygon)
