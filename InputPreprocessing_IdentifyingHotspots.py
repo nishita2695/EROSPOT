@@ -1,13 +1,20 @@
 """
-Author: Nishita Thakur
-Concept: Marvin Melzer
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
 Project: EROSPOT (DAKIS)
-Last Update: 2024-11-20
+
+Last Update: 2024-11-26
 
 Description: This script executes two processing steps: The first and most important - Integrates all the sub-models
 as a function call and in the correct order of execution. The second: Integrates the identification of
 hotspots after the first two steps of the model are executed. Some functions for the preprocessing
 steps are coded in this file: Can be modularized in the future.
+
+License: Please refer to the document titled 'License.docx' in the repository
 
 """
 import os
@@ -268,7 +275,7 @@ def identify_hotspots(x, UserPath, MainPathGDB):
 
 
 # Function for the atkis MB model (LULC)
-
+''' SECTION 1.3, User Guide'''
 def calculate_lulc(atkis_union, selected_watershed, x, watershed_names_lulc, watershed_folders, geodatabasePath,
                    UserPath, MainPathGDB):
     arcpy.env.overwriteOutput = True
@@ -439,7 +446,7 @@ def model_combined_once(CentralFolderPath, GDBPath, x):
     print("STEP 1: PREPROCESSING INPUTS")
     print("************************************************")
     # arr = np.empty(10, dtype=Union[Union[conversion, int, float, complex, str, Dict[Any, Any]], Any])
-
+    ''' SECTION 1.5, User Guide'''
     r_factor_komplett_bayern_tif = arcpy.Raster(CentralFolderPath + "/R_Faktor_bayern/r_factor_bayern.tif")
     ezg_by_erospot = GDBPath + "/ezg_by_erospot"
     geodatabasePath = GDBPath

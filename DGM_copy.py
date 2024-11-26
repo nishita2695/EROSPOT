@@ -1,12 +1,19 @@
 """
-Author: Nishita Thakur
-Concept: Marvin Melzer
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
 Project: EROSPOT (DAKIS)
-Last Update: 2024-11-25
+
+Last Update: 2024-11-26
 
 Description: This script is used to copy all raster tile coordinates that are within the minimum bounding rectangle as
 files in a folder and stitched together for each watershed to get the Digital Elevation Model for each Watershed
 which is an important parameter for the InVeST model as well.
+
+License: Please refer to the document titled 'License.docx' in the repository
 
 """
 import arcpy
@@ -21,7 +28,7 @@ import os
 # UserPath and paste tiles of several watershed there (between numbers 1 to 10) and then run this code
 # For example: D:/Users/Thakur/ErospotWorkspace/DGM1
 # ________________________________________________________________________________
-
+'''SECTION 1.2, User Guide'''
 def copyCoordinates_x_low(layer):
     dictionary__x_low = {}
     arcpy.env.overwriteOutput = True
@@ -142,9 +149,6 @@ def addCoordinateFiles(UserPathSent, x, dictionary__x_low, dictionary__x_high, d
 
             # Filepath for source folder - NEEDS TO BE GENERALIZED LATER (SSD DATA)
             filepath = UserPathSent + "/DGM1"
-            output_filepath = "Z:/FOR/FOR-Projects/EROSPOT/Geodata/InputDataInvest/testing/ws_" + str(
-                x) + "/DGM_ws_" + str(
-                x)
             # Filepath for destination folder
             titlefolder = folder_ws + "/DGM_ws_" + str(x)
 

@@ -1,21 +1,33 @@
 """
-Author: Nishita Thakur
-Concept: Marvin Melzer
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
 Project: EROSPOT (DAKIS)
-Last Update: 2024-11-20
+
+Last Update: 2024-11-26
+
 Tag: Verified
+
 Funders: The Bavarian State Ministry of Food, Agriculture and Forestry. Funding reference number: A/22/01,
 BMBF funding line "Agricultural Systems of the Future", Funding reference number: 031B0729A.
 
 Description: This script is the starting point for the whole model - it takes the watershed IDs as user inputs, and
 depending on the choices made by the user, executes the 'EROSPOT' model in a continuous, discrete or single execution.
-Note to the executors: Please refer to the README for detailed description of how to run the model
+Note to the executors: Please refer to the User Guide in the Repository for detailed description of how to run the model
 Website: https://erospot.zalf.de/ (Relevant information like publications/upcoming publications including
 the visualisation is available in German on the website.
+
+License: Please refer to the document titled 'License.docx' in the repository
 
 """
 
 from ExecutingInVeST import start_process
+
+'''SECTION 2.4, User Guide - Please create folders according to the descriptions in this section
+of the User Guide'''
 
 
 def main():

@@ -1,10 +1,17 @@
 """
-Author: Nishita Thakur
-Concept: Marvin Melzer
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
 Project: EROSPOT (DAKIS)
-Last Update: 2024-11-25
+
+Last Update: 2024-11-26
 
 Description: This script is used to extract streams or water bodies from the ATKIS dataset
+
+License: Please refer to the document titled 'License.docx' in the repository
 
 """
 import arcpy

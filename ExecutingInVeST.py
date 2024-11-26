@@ -1,11 +1,22 @@
 """
-Author: Nishita Thakur
-Concept: Marvin Melzer
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
 Project: EROSPOT (DAKIS)
-Last Update: 2024-11-20
+
+Last Update: 2024-11-26
+
+InVEST MODEL Reference: Natural Capital Project, 2024. InVEST 0.0. Stanford University, University of Minnesota,
+Chinese Academy of Sciences, The Nature Conservancy, World Wildlife Fund, Stockholm Resilience Centre and the Royal
+Swedish Academy of Sciences. https://naturalcapitalproject.stanford.edu/software/invest
 
 Description: This script is used to integrate all three functionalities: Input preprocessing,
-InVeST SDR Model Run and Hotspot generation
+InVeST SDR Model Run(Reference above) and Hotspot generation
+
+License: Please refer to the document titled 'License.docx' in the repository
 """
 
 from shapely import speedups
@@ -14,7 +25,7 @@ speedups.disable()
 import os
 import logging
 import sys
-#from ModelsIntegrated import model_combined, identify_hotspots
+# from ModelsIntegrated import model_combined, identify_hotspots
 from InputPreprocessing_IdentifyingHotspots import model_combined_once, identify_hotspots
 import natcap.invest.sdr.sdr
 import natcap.invest.utils
@@ -52,6 +63,9 @@ def get_user_values(**kwargs):
     print("Geodatabase", geodatabase)
     set_values(start_watershed, end_watershed, watershed_numbers, main_directory, geodatabase)
     start_process(start_watershed, end_watershed, watershed_numbers, main_directory, geodatabase)
+
+
+''' SECTION 2.5, User Guide - Modification to sdr.py described, please make the changes before running the model'''
 
 
 # Start process is called to check the User Input and redirect the parameters to the relevant execution.
@@ -119,7 +133,7 @@ def start_process(lower, upper, numbers, mainpath, gdbpath):
                 # particular watershed, then an error message is displayed and the next watershed in the loop is executed
                 try:
                     print("***********************************************")
-                    print("STEP 2: RUNNING InVeST SDR")
+                    print("STEP 2: EROSION MODELLING WITH InVEST SDR")
                     print("************************************************")
                     natcap.invest.sdr.sdr.execute(args)
 
@@ -191,6 +205,9 @@ def start_process(lower, upper, numbers, mainpath, gdbpath):
             # If there is something wrong with the data inputs of a
             # particular watershed, then an error message is displayed and the next watershed in the loop is executed
             try:
+                print("***********************************************")
+                print("STEP 2: EROSION MODELLING WITH InVEST SDR")
+                print("************************************************")
                 natcap.invest.sdr.sdr.execute(args)
 
             except:
@@ -251,6 +268,9 @@ def start_process(lower, upper, numbers, mainpath, gdbpath):
             # If there is something wrong with the data inputs of a
             # particular watershed, then an error message is displayed and the next watershed in the loop is executed
             try:
+                print("***********************************************")
+                print("STEP 2: EROSION MODELLING WITH InVEST SDR")
+                print("************************************************")
                 natcap.invest.sdr.sdr.execute(args)
 
             except:
