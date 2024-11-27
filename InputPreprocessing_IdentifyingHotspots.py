@@ -190,73 +190,75 @@ def identify_hotspots(x, UserPath, MainPathGDB):
 
     # Process: Zonal Statistics as Table (2) (Zonal Statistics as Table) (ia)
     Zonal_hotspot = MainPathGDB + "/hotspot_zone_stats_ws_" + str(x)
-    arcpy.ia.ZonalStatisticsAsTable(Updated_Input_With_Rows_Removed, "ORIG_FID",
+
+    try:
+        arcpy.ia.ZonalStatisticsAsTable(Updated_Input_With_Rows_Removed, "ORIG_FID",
                                     sed_export,
                                     Zonal_hotspot, "DATA", "MEAN", "CURRENT_SLICE", [90], "AUTO_DETECT",
                                     "ARITHMETIC", 360)
 
-    # Process: Please Ckeck Join Fields! Join Field (Join Field) (management)
-    hotspots_check_join = \
+        # Process: Please Ckeck Join Fields! Join Field (Join Field) (management)
+        hotspots_check_join = \
         arcpy.management.JoinField(in_data=hotspots_add_tons_ha, in_field="ORIG_FID",
                                    join_table=Zonal_hotspot,
                                    join_field="ORIG_FID", fields=["MEAN"])[0]
 
-    # Process: Calculate Field (3) (Calculate Field) (management)
-    hotspots_cal_erosion = \
+        # Process: Calculate Field (3) (Calculate Field) (management)
+        hotspots_cal_erosion = \
         arcpy.management.CalculateField(in_table=hotspots_check_join,
                                         field="sed_export_tons_ha", expression="""Round($feature.MEAN * 10000, 2)
-        """, expression_type="ARCADE", code_block="""rec =0
-        def result_1()
+            """, expression_type="ARCADE", code_block="""rec =0
+            def result_1()
             round !MEAN!*10000""")[0]
 
-    # Process: Calculate Field (2) (Calculate Field) (management)
-    hotspots_cal_erosion_hotspot = \
+        # Process: Calculate Field (2) (Calculate Field) (management)
+        hotspots_cal_erosion_hotspot = \
         arcpy.management.CalculateField(in_table=hotspots_cal_erosion, field="sed_export_tons_hot",
                                         expression="Round($feature.MEAN * $feature.Shape_Area, 2)",
                                         expression_type="ARCADE", code_block="""Round($feature.MEAN *
         , 2)""")[0]
-    print("Converting features to json...")
-    # Process: Features To JSON (2) (Features To JSON) (conversion)
-    if os.path.exists(UserPath + "/Hotspots"):
-        print("Folder for Hotspots already exist!")
-    else:
-        os.makedirs(UserPath + "/Hotspots")
-        print("Hotspots folder created for storing .geojson files!")
+        print("Converting features to json...")
+        # Process: Features To JSON (2) (Features To JSON) (conversion)
+        if os.path.exists(UserPath + "/Hotspots"):
+            print("Folder for Hotspots already exist!")
+        else:
+            os.makedirs(UserPath + "/Hotspots")
+            print("Hotspots folder created for storing .geojson files!")
 
-    json_path = UserPath + "/Hotspots/ws_" + str(x) + ".geojson"
-    arcpy.conversion.FeaturesToJSON(in_features=hotspots_cal_erosion_hotspot,
+        json_path = UserPath + "/Hotspots/ws_" + str(x) + ".geojson"
+        arcpy.conversion.FeaturesToJSON(in_features=hotspots_cal_erosion_hotspot,
                                     out_json_file=json_path, geoJSON="GEOJSON",
                                     outputToWGS84="WGS84")
-    print("Deleting extra layers...")
-    # Process: Delete (Delete) (management)
-    Delete_Succeeded = arcpy.Delete_management(in_data=[hotspots_add_sed_exp, min_bounding, multi_to_single,
+        print("Deleting extra layers...")
+        # Process: Delete (Delete) (management)
+        Delete_Succeeded = arcpy.Delete_management(in_data=[hotspots_add_sed_exp, min_bounding, multi_to_single,
                                                         Zonal_hotspot, buffer2, buffer1, dissolved_dataset,
                                                         statistics_zonal, raster_polygon, hotspot_union
                                                         ])[0]
 
-    # Process: Zonal Statistics as Table (3) (Zonal Statistics as Table) (ia)
-    zonal_ws_stats = MainPathGDB + "/stats_zonal_final_ws_" + str(x)
-    arcpy.ia.ZonalStatisticsAsTable(buffered_fields, "OBJECTID", extract_ws,
+        # Process: Zonal Statistics as Table (3) (Zonal Statistics as Table) (ia)
+        zonal_ws_stats = MainPathGDB + "/stats_zonal_final_ws_" + str(x)
+        arcpy.ia.ZonalStatisticsAsTable(buffered_fields, "OBJECTID", extract_ws,
                                     zonal_ws_stats, "DATA", "MEAN_STD", "CURRENT_SLICE", [90],
                                     "AUTO_DETECT", "ARITHMETIC", 360)
 
-    # Process: Join Field (2) (Join Field) (management)
-    invekos_hotspots = \
+        # Process: Join Field (2) (Join Field) (management)
+        invekos_hotspots = \
         arcpy.management.JoinField(in_data=buffered_fields, in_field="OBJECTID",
                                    join_table=zonal_ws_stats, join_field="OBJECTID_1",
                                    fields=["MEAN", "MEDIAN", "STD"])[0]
 
-    # Process: Calculate Field (5) (Calculate Field) (management)
-    cal_mean = \
+        # Process: Calculate Field (5) (Calculate Field) (management)
+        cal_mean = \
         arcpy.management.CalculateField(in_table=invekos_hotspots, field="MEAN", expression="!MEAN!*10000")[0]
 
-    # Process: Alter Field (Alter Field) (management)
-    mean_tonnes_ha = \
+        # Process: Alter Field (Alter Field) (management)
+        mean_tonnes_ha = \
         arcpy.management.AlterField(in_table=cal_mean, field="MEAN", new_field_name="Tonnen_pro_Hektar",
                                     new_field_alias="Tonnen_pro_Hektar")[0]
 
-    # Process: Feature Class To Feature Class (Feature Class To Feature Class) (conversion)
-    Statistics_per_field = arcpy.conversion.FeatureClassToFeatureClass(in_features=mean_tonnes_ha,
+        # Process: Feature Class To Feature Class (Feature Class To Feature Class) (conversion)
+        Statistics_per_field = arcpy.conversion.FeatureClassToFeatureClass(in_features=mean_tonnes_ha,
                                                                        out_path=MainPathGDB,
                                                                        out_name="Statistics_per_field",
                                                                        field_mapping="Tonnen_pro_Hektar "
@@ -266,12 +268,14 @@ def identify_hotspots(x, UserPath, MainPathGDB):
                                                                                      MainPathGDB + "/layer_hotspot,"
                                                                                                    "Tonnen_pro_Hektar,-1,-1")[
         0]
-    print("Calculating the erosion in tonnes per hectare...")
-    # Process: Features To JSON (Features To JSON) (conversion)
-    Statistics_per_field_json = UserPath + "/stats_per_field_ws_" + str(x) + ".geojson"
-    arcpy.conversion.FeaturesToJSON(in_features=Statistics_per_field,
+        print("Calculating the erosion in tonnes per hectare...")
+        # Process: Features To JSON (Features To JSON) (conversion)
+        Statistics_per_field_json = UserPath + "/stats_per_field_ws_" + str(x) + ".geojson"
+        arcpy.conversion.FeaturesToJSON(in_features=Statistics_per_field,
                                     out_json_file=Statistics_per_field_json, geoJSON="GEOJSON",
                                     outputToWGS84="WGS84")
+    except:
+        print("NO HOTSPOTS IDENTIFIED FOR THIS WATERSHED...")
 
 
 # Function for the atkis MB model (LULC)
