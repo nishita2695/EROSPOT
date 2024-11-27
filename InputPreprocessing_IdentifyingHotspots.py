@@ -171,7 +171,7 @@ def identify_hotspots(x, UserPath, MainPathGDB):
     hotspot_final = MainPathGDB + "/hotspot_finalraster_ws_" + str(x)
     arcpy.MultipartToSinglepart_management(in_features=selection_hotspot_invekos,
                                            out_feature_class=hotspot_final)
-    print('Hotspots Identified...')
+
     # Process: Select Layer By Attribute (8) (Select Layer By Attribute) (management)
     hotspots_shapearea_400 = arcpy.SelectLayerByAttribute_management(in_layer_or_view=hotspot_final,
                                                                      where_clause="Shape_Area < 400")
@@ -192,11 +192,12 @@ def identify_hotspots(x, UserPath, MainPathGDB):
     Zonal_hotspot = MainPathGDB + "/hotspot_zone_stats_ws_" + str(x)
 
     try:
+
         arcpy.ia.ZonalStatisticsAsTable(Updated_Input_With_Rows_Removed, "ORIG_FID",
                                     sed_export,
                                     Zonal_hotspot, "DATA", "MEAN", "CURRENT_SLICE", [90], "AUTO_DETECT",
                                     "ARITHMETIC", 360)
-
+        print('HOTSPOTS IDENTIFIED...')
         # Process: Please Ckeck Join Fields! Join Field (Join Field) (management)
         hotspots_check_join = \
         arcpy.management.JoinField(in_data=hotspots_add_tons_ha, in_field="ORIG_FID",
