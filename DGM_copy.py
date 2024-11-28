@@ -1,3 +1,21 @@
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to copy all raster tile coordinates that are within the minimum bounding rectangle as
+files in a folder and stitched together for each watershed to get the Digital Elevation Model for each Watershed
+which is an important parameter for the InVeST model as well.
+
+License: Please refer to the document titled 'License.docx' in the repository
+
+"""
 import arcpy
 import os.path
 import shutil
@@ -10,10 +28,10 @@ import os
 # UserPath and paste tiles of several watershed there (between numbers 1 to 10) and then run this code
 # For example: D:/Users/Thakur/ErospotWorkspace/DGM1
 # ________________________________________________________________________________
-
+'''SECTION 1.2, User Guide'''
 def copyCoordinates_x_low(layer):
     dictionary__x_low = {}
-    arcpy.env.overwriteOutput = False
+    arcpy.env.overwriteOutput = True
     fldName1 = 'x_low'
     fldName_no = "expl_num"
 
@@ -27,7 +45,7 @@ def copyCoordinates_x_low(layer):
 def copyCoordinates_x_high(layer):
 
     dictionary__x_high = {}
-    arcpy.env.overwriteOutput = False
+    arcpy.env.overwriteOutput = True
     fldName1 = 'x_high'
     fldName_no = "expl_num"
 
@@ -41,7 +59,7 @@ def copyCoordinates_x_high(layer):
 def copyCoordinates_y_low(layer):
 
     dictionary__y_low = {}
-    arcpy.env.overwriteOutput = False
+    arcpy.env.overwriteOutput = True
     fldName2 = 'y_low'
     fldName_no = "expl_num"
 
@@ -54,7 +72,7 @@ def copyCoordinates_y_low(layer):
 
 def copyCoordinates_y_high(layer):
     dictionary__y_high = {}
-    arcpy.env.overwriteOutput = False
+    arcpy.env.overwriteOutput = True
     fldName1 = 'y_high'
     fldName_no = "expl_num"
 
@@ -69,19 +87,32 @@ def copyCoordinates_y_high(layer):
 def addCoordinateFiles(UserPathSent, x, dictionary__x_low, dictionary__x_high, dictionary__y_low,
                        dictionary__y_high):
     # Variable and list initializations
+    print(""+str(x))
     list_temp = []
     watershed_folders = UserPathSent + "/InputDataInvest/testing"
     folder_ws = watershed_folders + "/ws_" + str(x)
-    InputInvest = "Z:/FOR/FOR-Projects/EROSPOT/Geodata/InputDataInvest/testing"
+    print(dictionary__x_low)
+    print(dictionary__x_high)
+    print(dictionary__y_low)
+    print(dictionary__y_high)
+    print('' + str(dictionary__x_low.get(x)))
+    if x in dictionary__y_low:
+        print("X is"+ str(x))
     # Code for separating corner coordinates according to key value pairs extracted from layers
-    if x in dictionary__y_low and x in dictionary__y_high and x in dictionary__x_high and x in dictionary__x_low:
+    if (int(x) in dictionary__y_low and int(x) in dictionary__y_high and int(x) in dictionary__x_high and
+            int(x) in dictionary__x_low):
+        print("Loop entered for DGM Coordinates")
+        print(dictionary__x_low.get(int(x)))
+        print(dictionary__y_high.keys())  # List all the keys in the dictionary
+        print(type(dictionary__y_high))  # Ensure it's a dictionary
+        print(type(dictionary__y_high.get(int(x))))  # Check the type of the value returned
         # This part essentially checks in the dictionaries if values exist for the selected watershed and adds all four
         # corner coordinates of one watershed to a single sorted list - now it is no longer a dictionary data structure
         # For example, list_temp for ws_1 is [818,821,5377,5381]
-        list_temp.append(dictionary__y_high.get(x))
-        list_temp.append(dictionary__x_high.get(x))
-        list_temp.append(dictionary__y_low.get(x))
-        list_temp.append(dictionary__x_low.get(x))
+        list_temp.append(dictionary__y_high.get(int(x)))
+        list_temp.append(dictionary__x_high.get(int(x)))
+        list_temp.append(dictionary__y_low.get(int(x)))
+        list_temp.append(dictionary__x_low.get(int(x)))
     else:
         print("WATERSHED NOT FOUND, PLEASE CHECK IF THE WATERSHED EXISTS")
     # Sorts the list so that file names can go serially from x_low to y_high
@@ -118,9 +149,6 @@ def addCoordinateFiles(UserPathSent, x, dictionary__x_low, dictionary__x_high, d
 
             # Filepath for source folder - NEEDS TO BE GENERALIZED LATER (SSD DATA)
             filepath = UserPathSent + "/DGM1"
-            output_filepath = "Z:/FOR/FOR-Projects/EROSPOT/Geodata/InputDataInvest/testing/ws_" + str(
-                x) + "/DGM_ws_" + str(
-                x)
             # Filepath for destination folder
             titlefolder = folder_ws + "/DGM_ws_" + str(x)
 
@@ -213,4 +241,4 @@ if __name__ == '__main__':
         # Function to stitch the mosaic into one single raster
         stitchTiles(x, UserPath)
 
-    print("Done")
+

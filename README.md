@@ -1,25 +1,6 @@
-# EROSPOT
-Instructions: Running the python combined ModelBuilder
-Installations Required
-•	ArcGIS Pro (Any version)
-•	Python 3.4+
-•	A code editor like VisualStudioCode or PyCharm(preferred)
-o	Please create the following folders before you run:
-1. DriveName/Workspace/ (For ex: D:/Users/Thakur/ErospotWorkspace/)
-2. DriveName/Workspace/Geodatabase.gdb (For the geodatabase that will be storing intermediate inputs for computation during the model run)
-Adjusting the sdr.py Natcap.Invest code
-This part to be added from the workflow that we cannot access in the EROSPOT folder
-Preparations - Python and Anaconda
-•	Please open the file named: EROSPOT.py using a code editor like pycharm. Right click on the files on the pycharm editor screen and go to Modify Run Configurations. 
+## EROSPOT Software part 1
+Soil erosion in agriculture reduces yield potential and at the same time damages surrounding ecosystems, especially water bodies through sediment, nutrient and pesticide inputs. In the EROSPOT project, high-risk locations (hotspots) polluting water bodies through water erosion were identified on farmland at sub-field level through the automated processing of high-resolution geodata. The hotspots indicate high priority locations for erosion control and are thus of value for farmers, advisors, policy makers and society. 
+The method published by Melzer et al. (2023) consists of three main steps: i) preprocessing geodata at the watershed level for the erosion model InVEST SDR (Natural Capital Project 2024) ii) calculating an erosion raster by InVEST SDR, iii) identifying hotspots based on the InVEST SDR output “sed_export.tif”.
+The high resolution of input data, in particular a digital elevation model (DEM) based on a 1x1 meter grid, places high demands on computing power. Analysis on large areas (federal states or nations) are requiring a division of calculations into smaller catchment areas. Given the high amount of processing steps, automation is mandatory. In addition, automation enables the rapid recalculation of outputs, e.g. to map land use scenarios or actual changes by time. The three presented steps where thus completely automated in python to calculate 1x1 meter resolution raster datasets and respective sharply delineated hotspots (vector data) for individual watersheds. The automation was adapted to datasets available in the federal state of Bavaria (south Germany) but allows nation-wide calculations (for Germany and other countries with similar data availability). Results are shown by the EROSPOT 3D Web App: www.erospot.de  
 
- 
-
-•	On the Python Interpreter drop down tab, select the ArcGISPro (python) environment and click ok. This is done so that the arcpy libraries are recognized by the editor.  
-
-Running the Combined Model
-•	Open the file: EROSPOT.py and change the paths named UserPath and MainPathGDB and save the file. The UserPath should simply point to your workspace, and the MainPathGDB should point to the Geodatabase inside your workspace. 
-
- 
-•	Please select and copy the version of sdr.py that was modified by you and paste it in the folder: External libraries -> arcpy -> site-packages ->natcap -> invest -> sdr  There will be a prompt that will ask you for admin rights and that if you are sure to replace the sdr.py file in the destination – you have to agree for the sdr.py to be pasted into this location. And now when the model runs, the correct sdr.py file will be referred to.
-•	Right Click on the EROSPOT.py and select run. The script should be running and the watershed numbers and models being calculated should appear on the screen. Please wait till the watersheds have finished running and open your output folder (DriveName/Workspace/Hotspots) and check if your outputs have been generated. If yes, you have successfully run the Model on python.
-
+**More information provided by the file "User guide to run EROSPOT software part 1"**

@@ -1,4 +1,19 @@
-# author:nishita
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to combine the invekos data to get the field boundaries,
+and also adjust the attributes as per the general description provided in the guidebook for the years from 2015-2021
+
+License: Please refer to the document titled 'License.docx' in the repository
+"""
 import arcpy
 
 # Allowing overwriting outputs on reruns

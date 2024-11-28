@@ -1,6 +1,23 @@
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to get the corner coordinates of the minimum bounding rectangle
+of the watershed and store them as files in a coherent naming structure
+
+License: Please refer to the document titled 'License.docx' in the repository
+
+"""
 import arcpy
 
-
+'''SECTION 1.2, User Guide'''
 def find_coordinates(selected_watershed, x, UserPath, MainPathGDB, ezg_by_erospot):
     arcpy.env.overwriteOutput = True
     #ezg_by_erospot = MainPathGDB + "/ezg_by_erospot"

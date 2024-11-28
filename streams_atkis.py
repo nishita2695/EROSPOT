@@ -1,11 +1,26 @@
-# author:nishita
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to extract streams or water bodies from the ATKIS dataset
+
+License: Please refer to the document titled 'License.docx' in the repository
+
+"""
 import arcpy
 
 arcpy.env.overwriteOutput = True
 
 
 def streams_atkis(selected_watershed, x, UserPath, MainPathGDB):
-    print("Model Streams_ATKIS")
+    print("Calculating the Water bodies from ATKIS data...")
     gew01_shp = UserPath + "/ATKIS/gew01_f.shp"
     gew01_shp_l = UserPath + "/ATKIS/gew01_l.shp"
     gew01_l_Clip = MainPathGDB + "/gew01_Clip"

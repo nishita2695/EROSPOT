@@ -1,9 +1,21 @@
-'''
-@ nishita
-k- factor calculation including sealed areas for each watershed
+
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to calculate the k-factor for watersheds, including sealed areas as well.
 To be called in a loop from the integrated model. Standalone version works as well. Loop parameters need to be changed,
 adjustable statically by user.
-'''
+
+License: Please refer to the document titled 'License.docx' in the repository
+"""
 import arcpy
 import os
 
@@ -13,6 +25,7 @@ arcpy.env.overwriteOutput = True
 
 # Calculate k - factor Function, parameters: Main folder path, Geodatabase Path, and the iteration number
 # which in this case, is the watershed number
+'''SECTION 1.4, User Guide'''
 def calculate_K_Factor(GeoDatabasePath, DirectoryPath, selected_watershed, x):
     # Extensions required for vector and raster data processing
     arcpy.CheckOutExtension("spatial")
@@ -44,7 +57,7 @@ def calculate_K_Factor(GeoDatabasePath, DirectoryPath, selected_watershed, x):
     # Loop for each watershed
 
     if os.path.exists(DirectoryPath + "/InputDataInvest/testing/ws_" + str(x) + "/k-factor"):
-        print("ws_ exists")
+        print("Folder for storage of k-factor raster exists!")
     else:
         os.makedirs(DirectoryPath + "/InputDataInvest/testing/ws_" + str(x) + "/k-factor")
     clipped_k_factor = GeoDatabasePath + "/k_factor_clipped_str_" + str(x)
@@ -170,6 +183,7 @@ def calculate_K_Factor(GeoDatabasePath, DirectoryPath, selected_watershed, x):
 
     # Raster Calculator multiplies sealed areas of K-Factor by 0
     k_ws_tif = DirectoryPath + "/InputDataInvest/testing/ws_" + str(x) + "/k-factor/k-factor-ws_" + str(x) + ".tif"
+    print("Calculating sealed areas ...")
     Raster_multiplication = k_ws_tif
     k_ws_tif = clipped_k_factor * sealed_areas_ws
     # arcpy.env.cellSize = 1

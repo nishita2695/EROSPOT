@@ -1,6 +1,22 @@
+"""
+Authors: Nishita Thakur, Marvin Melzer
+
+Credit authorship contribution statement:
+Nishita Thakur: Software (lead). Marvin Melzer: Conceptualization (lead);
+Methodology (lead); Data duration (lead); Funding acquisition (lead); Software (supporting).
+
+Project: EROSPOT (DAKIS)
+
+Last Update: 2024-11-26
+
+Description: This script is used to get the shapefile for each watershed boundary
+
+License: Please refer to the document titled 'License.docx' in the repository
+
+"""
 import arcpy
 
-
+'''SECTION 1.1 , User Guide'''
 # Conversion of the feature layer based on the selected attribute to a shapefile
 def create_shape(y, selected_watershed_sent, Userpath):
     feature_layer = arcpy.MakeFeatureLayer_management(selected_watershed_sent, 'ws_shape_' + str(y))
