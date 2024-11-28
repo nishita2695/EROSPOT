@@ -71,7 +71,7 @@ def identify_hotspots(x, UserPath, MainPathGDB):
         extract_ws = MainPathGDB + "/masked_sed_raster_ws_" + str(x)
         extract_ws = arcpy.sa.ExtractByMask(sed_export, dissolved_dataset, "INSIDE")
         print("Extracting by mask....")
-    
+
         # Process: Zonal Statistics as Table
         table = MainPathGDB + "/table_ws_" + str(x)
         arcpy.ia.ZonalStatisticsAsTable(dissolved_dataset, "OBJECTID", extract_ws, table, ignore_nodata="DATA",
@@ -90,11 +90,11 @@ def identify_hotspots(x, UserPath, MainPathGDB):
         cal_field_zonal_statistics = \
             arcpy.management.CalculateField(in_table=add_field_zonal_statistics, field="min_value",
                                             expression="!MEAN_MEAN! + (1.5*!MEAN_STD!)")[0]
-    
+
         # Process: Create Constant Raster (Create Constant Raster) (sa)
-       # constant_raster_location = MainPathGDB + "/createConstantRaster"
-       # print("Creating constant raster....")
-     #   constant_raster = constant_raster_location
+        # constant_raster_location = MainPathGDB + "/createConstantRaster"
+        # print("Creating constant raster....")
+        #   constant_raster = constant_raster_location
         cursor = arcpy.SearchCursor(cal_field_zonal_statistics)
         field = "min_value"
         # check if one or more than one building footprint exist
@@ -103,125 +103,130 @@ def identify_hotspots(x, UserPath, MainPathGDB):
             print(min_value)
         # constant_raster_location = arcpy.sa.CreateConstantRaster(min_value, "FLOAT", "1", extract_ws)
         # constant raster not getting saved in the gdb
-        #constant_raster_location.save(constant_raster)
-    
+        # constant_raster_location.save(constant_raster)
+
         # Process: filter Raster and set hotspots to value 1 (Raster Calculator) (ia)
-        #con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
-        #filter_values_in_raster = con_raster_cal
+        # con_raster_cal = MainPathGDB + "/raster_constant_ws_" + str(x)
+        # filter_values_in_raster = con_raster_cal
         con_raster_cal = Con(extract_ws > min_value, 1, 0)
-        #con_raster_cal.save(filter_values_in_raster)
+        # con_raster_cal.save(filter_values_in_raster)
         # Process: Raster to Polygon (Raster to Polygon) (conversion)
         raster_polygon = MainPathGDB + "/raster_to_pol_hotspots_ws_" + str(x)
         arcpy.conversion.RasterToPolygon(in_raster=con_raster_cal, out_polygon_features=raster_polygon)
-    
+
         # Process: Select Layer By Attribute (Select Layer By Attribute) (management)
         selected_hotspot = arcpy.SelectLayerByAttribute_management(in_layer_or_view=raster_polygon,
                                                                    where_clause="gridcode = 1")
         print("Converting to polygon...")
-    
+
         # Process: Buffer of 3 M (Buffer) (analysis)
         buffer1 = MainPathGDB + "/hotspot_buffer1_ws_" + str(x)
-        arcpy.Buffer_analysis(in_features=selected_hotspot, out_feature_class=buffer1, buffer_distance_or_field="3 Meters",
+        arcpy.Buffer_analysis(in_features=selected_hotspot, out_feature_class=buffer1,
+                              buffer_distance_or_field="3 Meters",
                               dissolve_option="ALL")
-    
+
         #  Process: Buffer of -4M (Buffer) (analysis)
         buffer2 = MainPathGDB + "/hotspot_buffer2_ws_" + str(x)
         arcpy.Buffer_analysis(in_features=buffer1, out_feature_class=buffer2, buffer_distance_or_field="-4 Meters",
                               dissolve_option="ALL")
         print("Buffering...")
-    
+
         # Process: Multipart To Singlepart (2) (Multipart To Singlepart) (management)
         multi_to_single = MainPathGDB + "/hotspot_multi_ws_" + str(x)
         arcpy.MultipartToSinglepart_management(in_features=buffer2, out_feature_class=multi_to_single)
-    
+
         # Process: Select Layer By Attribute (2) (Select Layer By Attribute) (management)
         selection_shapearea = arcpy.SelectLayerByAttribute_management(in_layer_or_view=multi_to_single,
                                                                       where_clause="Shape_Area > 100")
-    
+
         # Process: Minimum Bounding Geometry = convex (Minimum Bounding Geometry) (management)
         min_bounding = MainPathGDB + "/hotspot_min_bounding_ws_" + str(x)
         arcpy.MinimumBoundingGeometry_management(in_features=selection_shapearea, out_feature_class=min_bounding,
                                                  geometry_type="CONVEX_HULL", group_option="NONE")
-    
+
         # Process: Select Layer By Attribute (3) (Select Layer By Attribute) (management)
         selection_shapearea_bigger = arcpy.SelectLayerByAttribute_management(in_layer_or_view=min_bounding,
                                                                              where_clause="Shape_Area > 250")
-    
+
         # Process: Add Field (Add Field) (management)
         add_ident_hotspot = arcpy.AddField_management(in_table=selection_shapearea_bigger, field_name="ident_hotsp",
                                                       field_type="SHORT", field_alias="ident_hotsp")[0]
-    
+
         # Process: Calculate Field (Calculate Field) (management)
         cal_ident_hotspot = arcpy.CalculateField_management(in_table=add_ident_hotspot, field="ident_hotsp",
                                                             expression="1")[0]
-    
+
         # Process: Union (Union) (analysis)
         hotspot_union = MainPathGDB + "/hotspot_union_ws_" + str(x)
         arcpy.Union_analysis(in_features=[[dissolved_dataset, ""], [cal_ident_hotspot, ""]],
                              out_feature_class=hotspot_union)
         print("Performing Union...")
-    
+
         # Process: Select Layer By Attribute (4) (Select Layer By Attribute) (management)
         selection_hotspot_invekos = arcpy.SelectLayerByAttribute_management(in_layer_or_view=hotspot_union,
                                                                             where_clause="FID_dissolved_dataset <> -1 "
                                                                                          "And Shape_Area > 250 And "
                                                                                          "ident_hotsp = 1")
-    
+
         # Process: Final Raster with Multipart To Singlepart (Multipart To Singlepart) (management)
         hotspot_final = MainPathGDB + "/hotspot_finalraster_ws_" + str(x)
         arcpy.MultipartToSinglepart_management(in_features=selection_hotspot_invekos,
                                                out_feature_class=hotspot_final)
-    
+
         # Process: Select Layer By Attribute (8) (Select Layer By Attribute) (management)
         hotspots_shapearea_400 = arcpy.SelectLayerByAttribute_management(in_layer_or_view=hotspot_final,
                                                                          where_clause="Shape_Area < 400")
-    
+
         # Process: Delete Rows (Delete Rows) (management)
         Updated_Input_With_Rows_Removed = arcpy.management.DeleteRows(in_rows=hotspots_shapearea_400)[0]
-    
+
         # Process: Add Field (2) (Add Field) (management)
         hotspots_add_sed_exp = \
             arcpy.management.AddField(in_table=Updated_Input_With_Rows_Removed, field_name="sed_export_tons_hot",
                                       field_type="DOUBLE", field_alias="sed_export_tons_hot")[0]
         # Process: Add Field (3) (Add Field) (management)
         hotspots_add_tons_ha = \
-            arcpy.management.AddField(in_table=hotspots_add_sed_exp, field_name="sed_export_tons_ha", field_type="DOUBLE",
+            arcpy.management.AddField(in_table=hotspots_add_sed_exp, field_name="sed_export_tons_ha",
+                                      field_type="DOUBLE",
                                       field_alias="sed_export_tons_ha")[0]
-    
+
         # Process: Zonal Statistics as Table (2) (Zonal Statistics as Table) (ia)
         Zonal_hotspot = MainPathGDB + "/hotspot_zone_stats_ws_" + str(x)
 
     except:
-        print("??????????????????????????????????????????????????????")
-        print("UNKNOWN ERROR RELATED TO SMALL SIZE OF WATERSHED...")
-        print("??????????????????????????????????????????????????????")
+        print(
+            "????????????????????????????????????????????????????????????????????????????????????????????????????????")
+        print("ERROR RELATED TO MISSING FIELD BOUNDARIES; PLEASE INSPECT YOUR INPUT DATA "
+              "RELATED TO THE ANALYSED WATERSHED!")
+        print(
+            "????????????????????????????????????????????????????????????????????????????????????????????????????????")
 
     try:
 
         arcpy.ia.ZonalStatisticsAsTable(Updated_Input_With_Rows_Removed, "ORIG_FID",
-                                    sed_export,
-                                    Zonal_hotspot, "DATA", "MEAN", "CURRENT_SLICE", [90], "AUTO_DETECT",
-                                    "ARITHMETIC", 360)
+                                        sed_export,
+                                        Zonal_hotspot, "DATA", "MEAN", "CURRENT_SLICE", [90], "AUTO_DETECT",
+                                        "ARITHMETIC", 360)
         print('HOTSPOTS IDENTIFIED...')
         # Process: Please Ckeck Join Fields! Join Field (Join Field) (management)
         hotspots_check_join = \
-        arcpy.management.JoinField(in_data=hotspots_add_tons_ha, in_field="ORIG_FID",
-                                   join_table=Zonal_hotspot,
-                                   join_field="ORIG_FID", fields=["MEAN"])[0]
+            arcpy.management.JoinField(in_data=hotspots_add_tons_ha, in_field="ORIG_FID",
+                                       join_table=Zonal_hotspot,
+                                       join_field="ORIG_FID", fields=["MEAN"])[0]
 
         # Process: Calculate Field (3) (Calculate Field) (management)
         hotspots_cal_erosion = \
-        arcpy.management.CalculateField(in_table=hotspots_check_join,
-                                        field="sed_export_tons_ha", expression="""Round($feature.MEAN * 10000, 2)
+            arcpy.management.CalculateField(in_table=hotspots_check_join,
+                                            field="sed_export_tons_ha", expression="""Round($feature.MEAN * 10000, 2)
             """, expression_type="ARCADE", code_block="""rec =0
             def result_1()
             round !MEAN!*10000""")[0]
 
         # Process: Calculate Field (2) (Calculate Field) (management)
         hotspots_cal_erosion_hotspot = \
-        arcpy.management.CalculateField(in_table=hotspots_cal_erosion, field="sed_export_tons_hot",
-                                        expression="Round($feature.MEAN * $feature.Shape_Area, 2)",
-                                        expression_type="ARCADE", code_block="""Round($feature.MEAN *
+            arcpy.management.CalculateField(in_table=hotspots_cal_erosion, field="sed_export_tons_hot",
+                                            expression="Round($feature.MEAN * $feature.Shape_Area, 2)",
+                                            expression_type="ARCADE", code_block="""Round($feature.MEAN *
         , 2)""")[0]
         print("Converting features to json...")
         # Process: Features To JSON (2) (Features To JSON) (conversion)
@@ -233,53 +238,53 @@ def identify_hotspots(x, UserPath, MainPathGDB):
 
         json_path = UserPath + "/Hotspots/ws_" + str(x) + ".geojson"
         arcpy.conversion.FeaturesToJSON(in_features=hotspots_cal_erosion_hotspot,
-                                    out_json_file=json_path, geoJSON="GEOJSON",
-                                    outputToWGS84="WGS84")
+                                        out_json_file=json_path, geoJSON="GEOJSON",
+                                        outputToWGS84="WGS84")
         print("Deleting extra layers...")
         # Process: Delete (Delete) (management)
         Delete_Succeeded = arcpy.Delete_management(in_data=[hotspots_add_sed_exp, min_bounding, multi_to_single,
-                                                        Zonal_hotspot, buffer2, buffer1, dissolved_dataset,
-                                                        statistics_zonal, raster_polygon, hotspot_union
-                                                        ])[0]
+                                                            Zonal_hotspot, buffer2, buffer1, dissolved_dataset,
+                                                            statistics_zonal, raster_polygon, hotspot_union
+                                                            ])[0]
 
         # Process: Zonal Statistics as Table (3) (Zonal Statistics as Table) (ia)
         zonal_ws_stats = MainPathGDB + "/stats_zonal_final_ws_" + str(x)
         arcpy.ia.ZonalStatisticsAsTable(buffered_fields, "OBJECTID", extract_ws,
-                                    zonal_ws_stats, "DATA", "MEAN_STD", "CURRENT_SLICE", [90],
-                                    "AUTO_DETECT", "ARITHMETIC", 360)
+                                        zonal_ws_stats, "DATA", "MEAN_STD", "CURRENT_SLICE", [90],
+                                        "AUTO_DETECT", "ARITHMETIC", 360)
 
         # Process: Join Field (2) (Join Field) (management)
         invekos_hotspots = \
-        arcpy.management.JoinField(in_data=buffered_fields, in_field="OBJECTID",
-                                   join_table=zonal_ws_stats, join_field="OBJECTID_1",
-                                   fields=["MEAN", "MEDIAN", "STD"])[0]
+            arcpy.management.JoinField(in_data=buffered_fields, in_field="OBJECTID",
+                                       join_table=zonal_ws_stats, join_field="OBJECTID_1",
+                                       fields=["MEAN", "MEDIAN", "STD"])[0]
 
         # Process: Calculate Field (5) (Calculate Field) (management)
         cal_mean = \
-        arcpy.management.CalculateField(in_table=invekos_hotspots, field="MEAN", expression="!MEAN!*10000")[0]
+            arcpy.management.CalculateField(in_table=invekos_hotspots, field="MEAN", expression="!MEAN!*10000")[0]
 
         # Process: Alter Field (Alter Field) (management)
         mean_tonnes_ha = \
-        arcpy.management.AlterField(in_table=cal_mean, field="MEAN", new_field_name="Tonnen_pro_Hektar",
-                                    new_field_alias="Tonnen_pro_Hektar")[0]
+            arcpy.management.AlterField(in_table=cal_mean, field="MEAN", new_field_name="Tonnen_pro_Hektar",
+                                        new_field_alias="Tonnen_pro_Hektar")[0]
 
         # Process: Feature Class To Feature Class (Feature Class To Feature Class) (conversion)
         Statistics_per_field = arcpy.conversion.FeatureClassToFeatureClass(in_features=mean_tonnes_ha,
-                                                                       out_path=MainPathGDB,
-                                                                       out_name="Statistics_per_field",
-                                                                       field_mapping="Tonnen_pro_Hektar "
-                                                                                     "\"Tonnen_pro_Hektar\" "
-                                                                                     "true true false 8 Double 0 0,"
-                                                                                     "First,#," +
-                                                                                     MainPathGDB + "/layer_hotspot,"
-                                                                                                   "Tonnen_pro_Hektar,-1,-1")[
-        0]
+                                                                           out_path=MainPathGDB,
+                                                                           out_name="Statistics_per_field",
+                                                                           field_mapping="Tonnen_pro_Hektar "
+                                                                                         "\"Tonnen_pro_Hektar\" "
+                                                                                         "true true false 8 Double 0 0,"
+                                                                                         "First,#," +
+                                                                                         MainPathGDB + "/layer_hotspot,"
+                                                                                                       "Tonnen_pro_Hektar,-1,-1")[
+            0]
         print("Calculating the erosion in tonnes per hectare...")
         # Process: Features To JSON (Features To JSON) (conversion)
         Statistics_per_field_json = UserPath + "/stats_per_field_ws_" + str(x) + ".geojson"
         arcpy.conversion.FeaturesToJSON(in_features=Statistics_per_field,
-                                    out_json_file=Statistics_per_field_json, geoJSON="GEOJSON",
-                                    outputToWGS84="WGS84")
+                                        out_json_file=Statistics_per_field_json, geoJSON="GEOJSON",
+                                        outputToWGS84="WGS84")
         print("Proceeding with next watershed...")
 
     except:
@@ -289,6 +294,8 @@ def identify_hotspots(x, UserPath, MainPathGDB):
 
 # Function for the atkis MB model (LULC)
 ''' SECTION 1.3, User Guide'''
+
+
 def calculate_lulc(atkis_union, selected_watershed, x, watershed_names_lulc, watershed_folders, geodatabasePath,
                    UserPath, MainPathGDB):
     arcpy.env.overwriteOutput = True
@@ -563,6 +570,4 @@ def model_combined_once(CentralFolderPath, GDBPath, x):
                 print(
                     "Some C Values are missing; Please note that they have been replaced by 0.5 for computation "
                     "purposes"
-                    )
-
-
+                )
